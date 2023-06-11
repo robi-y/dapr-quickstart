@@ -7,6 +7,8 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CheckoutServiceApplication {
 	private static final Logger logger = LoggerFactory.getLogger(CheckoutServiceApplication.class);
@@ -16,7 +18,7 @@ public class CheckoutServiceApplication {
 		String PUBSUB_NAME = "orderpubsub";
 		DaprClient client = new DaprClientBuilder().build();
 
-		for (int i = 0; i <= 10; i++) {
+		for (int i = 0; i <= 100; i++) {
 			int orderId = i;
 			Order order = new Order(orderId);
 
@@ -25,8 +27,10 @@ public class CheckoutServiceApplication {
 					PUBSUB_NAME,
 					TOPIC_NAME,
 					order).block();
+			String format = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
+			System.out.println(format);
 			logger.info("Published data: " + order.getOrderId());
-			TimeUnit.MILLISECONDS.sleep(5000);
+			TimeUnit.MILLISECONDS.sleep(50);
 		}
 	}
 }

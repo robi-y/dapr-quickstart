@@ -3,10 +3,28 @@ kind: Component
 metadata:
   name: orderpubsub
 spec:
-  type: pubsub.redis
+  type: pubsub.mqtt
   version: v1
   metadata:
-  - name: redisHost
-    value: localhost:6379
-  - name: redisPassword
-    value: ""
+    - name: consumerID
+      value: "{uuid}"
+    - name: url
+      value: "tcp://admin:emqx1234@localhost:1883"
+    - name: qos
+      value: 1
+    - name: retain
+      value: "false"
+    - name: cleanSession
+      value: "true"
+# apiVersion: dapr.io/v1alpha1
+# kind: Component
+# metadata:
+#   name: orderpubsub
+# spec:
+#   type: pubsub.redis
+#   version: v1
+#   metadata:
+#   - name: redisHost
+#     value: localhost:6379
+#   - name: redisPassword
+#     value: ""
