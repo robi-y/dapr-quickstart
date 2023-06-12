@@ -20,7 +20,7 @@ public class CheckoutServiceApplication {
 
 		for (int i = 0; i <= 100; i++) {
 			int orderId = i;
-			Order order = new Order(orderId);
+			Order order = new Order(orderId, (new Date()).getTime());
 
 			// Publish an event/message using Dapr PubSub
 			client.publishEvent(
@@ -39,4 +39,5 @@ public class CheckoutServiceApplication {
 @Getter
 class Order {
 	private int orderId;
+	private long timeStamp;
 }

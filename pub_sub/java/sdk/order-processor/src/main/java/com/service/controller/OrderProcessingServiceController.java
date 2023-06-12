@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import reactor.core.publisher.Mono;
+import java.util.Date;
+
 
 @RestController
 public class OrderProcessingServiceController {
@@ -24,7 +26,8 @@ public class OrderProcessingServiceController {
     public Mono<ResponseEntity> getCheckout(@RequestBody(required = false) CloudEvent<Order> cloudEvent) {
         return Mono.fromSupplier(() -> {
             try {
-                logger.info("Subscriber received: " + cloudEvent.getData().getOrderId());
+                long duration = (new Date()).getTime() - cloudEvent.getData().getTimeStamp();
+                logger.info("Subscriber received: " + cloudEvent.getData().getOrderId() + " Diff[ml]: " + duration);
                 return ResponseEntity.ok("SUCCESS");
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -37,4 +40,5 @@ public class OrderProcessingServiceController {
 @Setter
 class Order {
     private int orderId;
+    private long timeStamp;
 }
