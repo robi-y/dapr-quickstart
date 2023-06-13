@@ -27,7 +27,7 @@ public class OrderProcessingServiceController {
         return Mono.fromSupplier(() -> {
             try {
                 long duration = (new Date()).getTime() - cloudEvent.getData().getTimeStamp();
-                logger.info("Subscriber received: " + cloudEvent.getData().getOrderId() + " Diff[ml]: " + duration);
+                logger.error("Subscriber received: " + cloudEvent.getData().getOrderId() + " Diff[ml]: " + duration);
                 return ResponseEntity.ok("SUCCESS");
             } catch (Exception e) {
                 throw new RuntimeException(e);
