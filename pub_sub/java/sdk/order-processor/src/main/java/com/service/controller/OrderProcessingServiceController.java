@@ -15,25 +15,40 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import java.util.Date;
 
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+
 
 @RestController
 public class OrderProcessingServiceController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderProcessingServiceController.class);
+    private final ApplicationEventPublisher publisher;
+
+    public OrderProcessingServiceController(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
 
     @Topic(name = "orders", pubsubName = "orderpubsub")
     @PostMapping(path = "/orders", consumes = MediaType.ALL_VALUE)
     public Mono<ResponseEntity> getCheckout(@RequestBody(required = false) CloudEvent<Order> cloudEvent) {
         return Mono.fromSupplier(() -> {
             try {
-                long duration = (new Date()).getTime() - cloudEvent.getData().getTimeStamp();
-                logger.error("Subscriber received: " + cloudEvent.getData().getOrderId() + " Diff[ml]: " + duration);
+                publisher.publishEvent(cloudEvent.getData());
                 return ResponseEntity.ok("SUCCESS");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
     }
+
+    @EventListener
+    @Async
+	void handleTimeEvent(Order order) {
+        long duration = (new Date()).getTime() - order.getTimeStamp();
+        logger.error("Subscriber received: " + order.getOrderId() + " Diff[ml]: " + duration);
+	}
 }
 
 @Getter
